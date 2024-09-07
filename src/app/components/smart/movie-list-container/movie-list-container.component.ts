@@ -1,10 +1,10 @@
-import {Component, inject, ChangeDetectionStrategy, OnInit} from '@angular/core';
+import {Component, inject, ChangeDetectionStrategy, OnInit, DestroyRef} from '@angular/core';
 import {RouterOutlet} from '@angular/router';
 import {AsyncPipe, NgForOf, NgIf} from "@angular/common";
 import {Movie} from "../../../types/movie.types";
 import {MoviesService} from "../../../services/movies.service";
 import {MovieFormComponent} from "../../dumb/movie-form/movie-form.component";
-import {SearchComponent} from "../../dumb/movie-search/search.component";
+import {MovieSearchComponent} from "../../dumb/movie-search/movie-search.component";
 import {ActionButtonsComponent} from "../../dumb/movie-list-action-buttons/action-buttons.component";
 import {MovieListComponent} from "../../dumb/movie-list/movie-list.component";
 import {rxState} from "@rx-angular/state";
@@ -14,6 +14,7 @@ import {Subject, combineLatest, startWith, map, debounceTime, distinctUntilChang
 import {sortMovies} from "../../../utils/sort-movies.util";
 import {filterMovies} from "../../../utils/filter-moves.util";
 import {tap} from "rxjs/operators";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 const INITIAL_STATE: MovieStateType = {
   movies: [],
@@ -25,7 +26,7 @@ const INITIAL_STATE: MovieStateType = {
 @Component({
   selector: 'app-movies',
   standalone: true,
-  imports: [RouterOutlet, AsyncPipe, NgForOf, NgIf, MovieFormComponent, SearchComponent, ActionButtonsComponent, MovieListComponent],
+  imports: [RouterOutlet, AsyncPipe, NgForOf, NgIf, MovieFormComponent, MovieSearchComponent, ActionButtonsComponent, MovieListComponent],
   templateUrl: './movie-list-container.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -39,8 +40,9 @@ export class MovieListContainerComponent implements OnInit {
   readonly edit$ = new Subject<Movie>();
   readonly sort$ = new Subject<SortBy>();
   readonly save$ = new Subject<Movie>();
-
   private readonly moviesService = inject(MoviesService);
+  private readonly destroyRef = inject(DestroyRef);
+
   private readonly state = rxState<MovieStateType>(({set, connect}) => {
     set(INITIAL_STATE);
     connect('movies', this.fetchedMovies$);
@@ -76,8 +78,12 @@ export class MovieListContainerComponent implements OnInit {
   readonly selectedMovie = this.state.signal('selectedMovie');
 
   ngOnInit(): void {
-    this.fetchedMoviesTrigger$.pipe().subscribe(() => this.loadMovies());
+    this.fetchedMoviesTrigger$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.loadMovies());
     this.fetchedMoviesTrigger$.next();
+
+    setInterval(() => {
+      console.log('343434')
+    }, 1000);
   }
 
   private loadMovies() {

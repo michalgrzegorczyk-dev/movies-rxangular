@@ -1,47 +1,32 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import {Injectable, inject} from '@angular/core';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {Observable, of} from 'rxjs';
 import {Movie} from "../types/movie.types";
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class MoviesService {
-  private moviesUrl = 'api/movies';
-
-  httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+  private readonly moviesUrl = 'api/movies';
+  private readonly httpOptions = {
+    headers: new HttpHeaders({'Content-Type': 'application/json'})
   };
 
-  constructor(private http: HttpClient) { }
+  private readonly http = inject(HttpClient);
 
   getMovies(): Observable<Movie[]> {
-    return this.http.get<Movie[]>(this.moviesUrl)
-      .pipe(
-        tap(_ => console.log('fetched movies', _)),
-        catchError(this.handleError<Movie[]>('getMovies', []))
-      );
+    return this.http.get<Movie[]>(this.moviesUrl);
   }
 
   addMovie(movie: Movie): Observable<Movie> {
-    return this.http.post<Movie>(this.moviesUrl, movie, this.httpOptions).pipe(
-      tap((newMovie: Movie) => console.log(`added movie w/ id=${newMovie.id}`)),
-      catchError(this.handleError<Movie>('addMovie'))
-    );
+    return this.http.post<Movie>(this.moviesUrl, movie, this.httpOptions);
   }
 
   deleteMovie(id: number): Observable<Movie> {
     const url = `${this.moviesUrl}/${id}`;
-    return this.http.delete<Movie>(url, this.httpOptions).pipe(
-      tap(_ => console.log(`deleted movie id=${id}`)),
-      catchError(this.handleError<Movie>('deleteMovie'))
-    );
+    return this.http.delete<Movie>(url, this.httpOptions);
   }
 
   updateMovie(movie: Movie): Observable<any> {
-    return this.http.put(this.moviesUrl, movie, this.httpOptions).pipe(
-      tap(_ => console.log(`updated movie id=${movie.id}`)),
-      catchError(this.handleError<any>('updateMovie'))
-    );
+    return this.http.put(this.moviesUrl, movie, this.httpOptions);
   }
 
   private handleError<T>(operation = 'operation', result?: T) {
