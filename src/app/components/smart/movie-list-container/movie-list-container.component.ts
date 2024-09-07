@@ -80,13 +80,9 @@ export class MovieListContainerComponent implements OnInit {
   ngOnInit(): void {
     this.fetchedMoviesTrigger$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.loadMovies());
     this.fetchedMoviesTrigger$.next();
-
-    setInterval(() => {
-      console.log('343434')
-    }, 1000);
   }
 
-  private loadMovies() {
+  private loadMovies(): void {
     this.moviesService.getMovies().subscribe(movies => this.fetchedMovies$.next(movies))
   }
 }
