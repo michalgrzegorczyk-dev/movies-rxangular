@@ -4,9 +4,7 @@ import {MovieListContainerComponent} from "./components/smart/movie-list-contain
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [
-    MovieListContainerComponent
-  ],
+  imports: [MovieListContainerComponent],
   template: '<app-movies />',
 })
 export class AppComponent {

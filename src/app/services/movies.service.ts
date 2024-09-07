@@ -28,12 +28,4 @@ export class MoviesService {
   updateMovie(movie: Movie): Observable<any> {
     return this.http.put(this.moviesUrl, movie, this.httpOptions);
   }
-
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-      console.error(error);
-      console.log(`${operation} failed: ${error.message}`);
-      return of(result as T);
-    };
-  }
 }
