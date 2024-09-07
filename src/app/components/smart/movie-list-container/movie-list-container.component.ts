@@ -30,7 +30,6 @@ const INITIAL_STATE: MovieStateType = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MovieListContainerComponent implements OnInit {
-  // EVENTS
   readonly fetchedMovies$ = new Subject<Movie[]>();
   readonly fetchedMoviesTrigger$ = new Subject<void>();
   readonly delete$ = new Subject<Movie>();
@@ -79,10 +78,6 @@ export class MovieListContainerComponent implements OnInit {
   ngOnInit(): void {
     this.fetchedMoviesTrigger$.pipe().subscribe(() => this.loadMovies());
     this.fetchedMoviesTrigger$.next();
-  }
-
-  private onSave(movie: Movie) {
-    this.save$.next(movie);
   }
 
   private loadMovies() {
