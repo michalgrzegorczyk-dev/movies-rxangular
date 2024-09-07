@@ -5,9 +5,9 @@
     </div>
     <app-action-buttons (sortByTitle)="sort$.next('title')" (sortByYear)="sort$.next('year')" (addNew)="add$.next()"/>
     <app-movie-list [movies]="filteredMovies()" (editMovie)="edit$.next($event)" (deleteMovie)="delete$.next($event)"/>
-    @if (selectedMovie() !== null) {
+    @if (selectedMovie()) {
       <div class="mt-6 bg-white p-6 rounded-lg shadow-md">
-        <app-movie-form [movie]="selectedMovie()" (save)="onSave($event)" (cancel)="cancel$.next()"/>
+        <app-movie-form [movie]="selectedMovie()" (save)="save$.next($event)" (cancel)="cancel$.next()"/>
       </div>
     }
   </div>

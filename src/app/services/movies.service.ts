@@ -17,7 +17,7 @@ export class MoviesService {
   getMovies(): Observable<Movie[]> {
     return this.http.get<Movie[]>(this.moviesUrl)
       .pipe(
-        tap(_ => console.log('fetched movies')),
+        tap(_ => console.log('fetched movies', _)),
         catchError(this.handleError<Movie[]>('getMovies', []))
       );
   }

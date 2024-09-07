@@ -1,4 +1,4 @@
-import {Component, inject, ChangeDetectionStrategy, OnInit, effect} from '@angular/core';
+import {Component, inject, ChangeDetectionStrategy, OnInit} from '@angular/core';
 import {RouterOutlet} from '@angular/router';
 import {AsyncPipe, NgForOf, NgIf} from "@angular/common";
 import {Movie} from "../../../types/movie.types";
@@ -10,9 +10,10 @@ import {MovieListComponent} from "../../dumb/movie-list/movie-list.component";
 import {rxState} from "@rx-angular/state";
 import {MovieStateType} from "../../../types/movie-state.type";
 import {SortBy} from "../../../types/sorty-by.type";
-import {Subject, combineLatest, startWith, map, debounceTime, distinctUntilChanged} from "rxjs";
+import {Subject, combineLatest, startWith, map, debounceTime, distinctUntilChanged, switchMap} from "rxjs";
 import {sortMovies} from "../../../utils/sort-movies.util";
 import {filterMovies} from "../../../utils/filter-moves.util";
+import {tap} from "rxjs/operators";
 
 const INITIAL_STATE: MovieStateType = {
   movies: [],
@@ -30,26 +31,38 @@ const INITIAL_STATE: MovieStateType = {
 })
 export class MovieListContainerComponent implements OnInit {
   // EVENTS
-  readonly moviesFetch$ = new Subject<Movie[]>();
+  readonly fetchedMovies$ = new Subject<Movie[]>();
+  readonly fetchedMoviesTrigger$ = new Subject<void>();
   readonly delete$ = new Subject<Movie>();
   readonly add$ = new Subject<void>();
   readonly cancel$ = new Subject<void>();
   readonly searchQuery$ = new Subject<string>();
   readonly edit$ = new Subject<Movie>();
   readonly sort$ = new Subject<SortBy>();
+  readonly save$ = new Subject<Movie>();
 
   private readonly moviesService = inject(MoviesService);
   private readonly state = rxState<MovieStateType>(({set, connect}) => {
     set(INITIAL_STATE);
-    connect('movies', this.moviesFetch$);
+    connect('movies', this.fetchedMovies$);
     connect('movies', this.delete$, (state, movie) => movie.id ? state.movies.filter(m => m.id !== movie.id) : state.movies);
+    connect(this.save$.pipe(
+      switchMap(movie => !!movie.id ? this.moviesService.updateMovie(movie) : this.moviesService.addMovie(movie)),
+      tap(() => this.fetchedMoviesTrigger$.next())
+    ), ((state, movies) => {
+      return {
+        ...state,
+        movies,
+        selectedMovie: null,
+      }
+    }));
     connect('selectedMovie', this.add$, () => ({title: '', year: new Date().getFullYear()}));
     connect('selectedMovie', this.cancel$, () => null);
     connect('selectedMovie', this.edit$, (_, movie) => movie);
     connect('sortBy', this.sort$, (_, sortBy) => sortBy);
     connect('filteredMovies', combineLatest([
-        this.moviesFetch$,
-        this.searchQuery$.pipe(debounceTime(400), distinctUntilChanged(), startWith('')),
+        this.fetchedMovies$,
+        this.searchQuery$.pipe(debounceTime(500), distinctUntilChanged(), startWith('')),
         this.sort$.pipe(startWith<SortBy>('title'))
       ]).pipe(
         map(([movies, search, sort]: [Movie[], string, SortBy]) => {
@@ -60,30 +73,19 @@ export class MovieListContainerComponent implements OnInit {
     );
   });
 
-  filteredMovies = this.state.signal('filteredMovies');
-  selectedMovie = this.state.signal('selectedMovie');
+  readonly filteredMovies = this.state.signal('filteredMovies');
+  readonly selectedMovie = this.state.signal('selectedMovie');
 
-  ngOnInit() {
-    this.moviesService.getMovies().subscribe(movies => {
-      this.moviesFetch$.next(movies);
-    })
+  ngOnInit(): void {
+    this.fetchedMoviesTrigger$.pipe().subscribe(() => this.loadMovies());
+    this.fetchedMoviesTrigger$.next();
   }
 
-  onSave(movie: Movie) {
-    if (movie.id !== undefined) {
-      this.moviesService.updateMovie(movie).subscribe(() => {
-        // this.loadMovies();
-        this.state.set({
-          selectedMovie: null
-        })
-      });
-    } else {
-      this.moviesService.addMovie(movie).subscribe(() => {
-        // this.loadMovies();
-        this.state.set({
-          selectedMovie: null
-        })
-      });
-    }
+  private onSave(movie: Movie) {
+    this.save$.next(movie);
+  }
+
+  private loadMovies() {
+    this.moviesService.getMovies().subscribe(movies => this.fetchedMovies$.next(movies))
   }
 }
