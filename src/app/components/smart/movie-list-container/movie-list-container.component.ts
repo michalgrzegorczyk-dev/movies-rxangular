@@ -10,7 +10,7 @@ import {MovieListComponent} from "../../dumb/movie-list/movie-list.component";
 import {rxState} from "@rx-angular/state";
 import {MovieStateType} from "../../../types/movie-state.type";
 import {SortBy} from "../../../types/sorty-by.type";
-import {Subject, combineLatest, startWith, map, debounceTime, distinctUntilChanged, switchMap} from "rxjs";
+import {Subject, combineLatest, startWith, map, debounceTime, distinctUntilChanged, switchMap, EMPTY} from "rxjs";
 import {sortMovies} from "../../../utils/sort-movies.util";
 import {filterMovies} from "../../../utils/filter-moves.util";
 import {tap} from "rxjs/operators";
@@ -46,14 +46,24 @@ export class MovieListContainerComponent implements OnInit {
   private readonly state = rxState<MovieStateType>(({set, connect}) => {
     set(INITIAL_STATE);
     connect('movies', this.fetchedMovies$);
-    connect('movies', this.delete$, (state, movie) => movie.id ? state.movies.filter(m => m.id !== movie.id) : state.movies);
+    connect(this.delete$.pipe(switchMap((movie: Movie) => {
+      if (movie.id) {
+        return this.moviesService.deleteMovie(movie.id).pipe(tap(() => this.fetchedMoviesTrigger$.next()));
+      }
+      return EMPTY;
+
+    })), (state, _) => {
+      return {
+        ...state,
+        selectedMovie: null,
+      }
+    });
     connect(this.save$.pipe(
       switchMap(movie => !!movie.id ? this.moviesService.updateMovie(movie) : this.moviesService.addMovie(movie)),
       tap(() => this.fetchedMoviesTrigger$.next())
-    ), ((state, movies) => {
+    ), ((state, _) => {
       return {
         ...state,
-        movies,
         selectedMovie: null,
       }
     }));
