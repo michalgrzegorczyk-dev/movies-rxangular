@@ -10,7 +10,7 @@ export class MovieSearchComponent {
   readonly searchQuery = signal<string>('');
   readonly search = output<string>();
 
-  onInput(event: Event) {
+  onInput(event: Event): void {
     this.search.emit((event.target as HTMLInputElement).value);
   }
 }

@@ -10,9 +10,9 @@ import {Movie} from '../../../types/movie.types';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MovieFormComponent {
-  save = output<Movie>();
-  cancel = output<void>();
-  movieCopy = model<Movie>({title: '', year: new Date().getFullYear()});
+  readonly save = output<Movie>();
+  readonly cancel = output<void>();
+  readonly movieCopy = model<Movie>({title: '', year: new Date().getFullYear()});
 
   @Input() set movie(value: Movie | null) {
     this.movieCopy.set(value ? {...value} : {title: '', year: new Date().getFullYear()});

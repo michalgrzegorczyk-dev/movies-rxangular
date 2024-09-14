@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, ChangeDetectionStrategy} from '@angular/core';
 import {MovieListContainerComponent} from "./components/smart/movie-list-container/movie-list-container.component";
 
 @Component({
@@ -6,6 +6,7 @@ import {MovieListContainerComponent} from "./components/smart/movie-list-contain
   standalone: true,
   imports: [MovieListContainerComponent],
   template: '<app-movies />',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent {
 }

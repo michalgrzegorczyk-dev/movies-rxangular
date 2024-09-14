@@ -1,11 +1,14 @@
 import {Injectable, inject} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {Observable, of} from 'rxjs';
+import {Observable} from 'rxjs';
 import {Movie} from "../types/movie.types";
 
-@Injectable({providedIn: 'root'})
+const MOVIE_URL = 'api/movies';
+
+@Injectable({
+  providedIn: 'root'
+})
 export class MoviesService {
-  private readonly moviesUrl = 'api/movies';
   private readonly httpOptions = {
     headers: new HttpHeaders({'Content-Type': 'application/json'})
   };
@@ -13,19 +16,18 @@ export class MoviesService {
   private readonly http = inject(HttpClient);
 
   getMovies(): Observable<Movie[]> {
-    return this.http.get<Movie[]>(this.moviesUrl);
+    return this.http.get<Movie[]>(MOVIE_URL);
   }
 
   addMovie(movie: Movie): Observable<Movie> {
-    return this.http.post<Movie>(this.moviesUrl, movie, this.httpOptions);
+    return this.http.post<Movie>(MOVIE_URL, movie, this.httpOptions);
   }
 
   deleteMovie(id: number): Observable<Movie> {
-    const url = `${this.moviesUrl}/${id}`;
-    return this.http.delete<Movie>(url, this.httpOptions);
+    return this.http.delete<Movie>(`${MOVIE_URL}/${id}`, this.httpOptions);
   }
 
   updateMovie(movie: Movie): Observable<any> {
-    return this.http.put(this.moviesUrl, movie, this.httpOptions);
+    return this.http.put(MOVIE_URL, movie, this.httpOptions);
   }
 }

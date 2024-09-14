@@ -1,7 +1,7 @@
 import {Movie} from "./movie.types";
-import {SortBy} from "./sorty-by.type";
+import {SortBy} from "./movie-sort-by.type";
 
-export interface MovieStateType {
+export type MovieStateType = {
   movies: Movie[];
   sortBy: SortBy;
   selectedMovie: Movie | null;

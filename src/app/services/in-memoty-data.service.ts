@@ -6,7 +6,7 @@ import {Movie} from "../types/movie.types";
   providedIn: 'root',
 })
 export class InMemoryDataService implements InMemoryDbService {
-  createDb() {
+  createDb(): { movies: Movie[] } {
     const movies: Movie[] = [
       {id: 1, title: 'The Shawshank Redemption', year: 1994},
       {id: 2, title: 'The Godfather', year: 1972},
