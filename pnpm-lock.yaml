@@ -32,6 +32,9 @@ dependencies:
   '@rx-angular/state':
     specifier: ^18.0.0
     version: 18.0.0(@angular-devkit/core@18.2.3)(@angular-devkit/schematics@18.2.3)(@angular/core@18.2.3)(rxjs@7.8.1)
+  '@rx-angular/template':
+    specifier: ^18.0.2
+    version: 18.0.2(@angular-devkit/core@18.2.3)(@angular-devkit/schematics@18.2.3)(@angular/core@18.2.3)(@rx-angular/cdk@18.0.0)(rxjs@7.8.1)
   angular-in-memory-web-api:
     specifier: ^0.18.0
     version: 0.18.0(@angular/common@18.2.3)(@angular/core@18.2.3)(rxjs@7.8.1)
@@ -2941,6 +2944,21 @@ packages:
     dev: true
     optional: true
 
+  /@rx-angular/cdk@18.0.0(@angular-devkit/core@18.2.3)(@angular-devkit/schematics@18.2.3)(@angular/core@18.2.3)(rxjs@7.8.1):
+    resolution: {integrity: sha512-U3qLXxDQrs1SNTmI9UNRrmo1oXG2B3gIPScWrERm0PORJDAzmKFhL+3wpngd2F03nGPJIICOzSQyk8wu3mdlxQ==}
+    peerDependencies:
+      '@angular/core': ^18.0.0
+      rxjs: ^6.5.3 || ^7.4.0
+    dependencies:
+      '@angular/core': 18.2.3(rxjs@7.8.1)(zone.js@0.14.10)
+      ng-morph: 4.6.5(@angular-devkit/core@18.2.3)(@angular-devkit/schematics@18.2.3)(tslib@2.7.0)
+      rxjs: 7.8.1
+      tslib: 2.7.0
+    transitivePeerDependencies:
+      - '@angular-devkit/core'
+      - '@angular-devkit/schematics'
+    dev: false
+
   /@rx-angular/state@18.0.0(@angular-devkit/core@18.2.3)(@angular-devkit/schematics@18.2.3)(@angular/core@18.2.3)(rxjs@7.8.1):
     resolution: {integrity: sha512-fOqybNNaMBixO6SHXg91hHRKIN8rHbPMIS1UcnRwpxn83FtBwE3Yp5c41ArPnM4fKh2M16mo1tKq5SUt0sj3MA==}
     peerDependencies:
@@ -2948,6 +2966,23 @@ packages:
       rxjs: ^6.5.3 || ^7.4.0
     dependencies:
       '@angular/core': 18.2.3(rxjs@7.8.1)(zone.js@0.14.10)
+      ng-morph: 4.6.5(@angular-devkit/core@18.2.3)(@angular-devkit/schematics@18.2.3)(tslib@2.7.0)
+      rxjs: 7.8.1
+      tslib: 2.7.0
+    transitivePeerDependencies:
+      - '@angular-devkit/core'
+      - '@angular-devkit/schematics'
+    dev: false
+
+  /@rx-angular/template@18.0.2(@angular-devkit/core@18.2.3)(@angular-devkit/schematics@18.2.3)(@angular/core@18.2.3)(@rx-angular/cdk@18.0.0)(rxjs@7.8.1):
+    resolution: {integrity: sha512-aWL1VQO35IK8kcOanzTZdKTjQNEoBZb63tuBnh47sDoiHk/5QMCPx5aV1EwT7AiZQqFxg/nzE7JXHtz6Kela7Q==}
+    peerDependencies:
+      '@angular/core': ^18.0.0
+      '@rx-angular/cdk': ^18.0.0
+      rxjs: ^6.5.3 || ^7.4.0
+    dependencies:
+      '@angular/core': 18.2.3(rxjs@7.8.1)(zone.js@0.14.10)
+      '@rx-angular/cdk': 18.0.0(@angular-devkit/core@18.2.3)(@angular-devkit/schematics@18.2.3)(@angular/core@18.2.3)(rxjs@7.8.1)
       ng-morph: 4.6.5(@angular-devkit/core@18.2.3)(@angular-devkit/schematics@18.2.3)(tslib@2.7.0)
       rxjs: 7.8.1
       tslib: 2.7.0

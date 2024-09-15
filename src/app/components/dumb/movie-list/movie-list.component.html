@@ -1,7 +1,5 @@
 <ul class="bg-white rounded-lg shadow-md overflow-hidden divide-y divide-gray-200">
-  @for (movie of movies(); track movie.id) {
-    <li>
-      <app-movie-list-item [movie]="movie" (edit)="editMovie.emit($event)" (delete)="deleteMovie.emit($event)" />
-    </li>
-  }
+  <li *rxFor="let movie of movies">
+    <app-movie-list-item [movie]="movie" (edit)="editMovie.emit($event)" (delete)="deleteMovie.emit($event)" />
+  </li>
 </ul>
